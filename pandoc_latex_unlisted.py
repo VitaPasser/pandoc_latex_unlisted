@@ -6,6 +6,7 @@ Pandoc filter for unlisting user defined headers in LaTeX
 
 from panflute import *
 
+
 def header(elem, doc):
     # Is it in the right format and is it an Header?
     if doc.format == 'latex' and isinstance(elem, Header):
@@ -13,10 +14,11 @@ def header(elem, doc):
         for current in doc.list_classes:
             if current <= classes:
                 return [
-                    RawBlock('\\renewcommand{\\addcontentsline}[3]{}', 'tex'),
+                    RawBlock('\\addtocontents{toc}{\\protect\\setcounter{tocdepth}{-1}}', 'tex'),
                     elem,
-                    RawBlock('\\renewcommand{\\addcontentsline}[3]{\\oldaddcontentsline{#1}{#2}{#3}}', 'tex'),
+                    RawBlock('\\addtocontents{toc}{\\protect\\setcounter{tocdepth}{3}}', 'tex'),
                 ]
+
 
 def prepare(doc):
     doc.list_classes = [set(['unlisted'])]
@@ -33,6 +35,7 @@ def prepare(doc):
             elif isinstance(classes, list):
                 doc.list_classes.append(set(classes))
 
+
 def finalize(doc):
     # Add header-includes if necessary
     if 'header-includes' not in doc.metadata:
@@ -41,9 +44,11 @@ def finalize(doc):
     elif not isinstance(doc.metadata['header-includes'], MetaList):
         doc.metadata['header-includes'] = MetaList(doc.metadata['header-includes'])
     doc.metadata['header-includes'].append(MetaInlines(RawInline('\\let\\oldaddcontentsline\\addcontentsline', 'tex')))
-    
-def main(doc = None):
-    return run_filter(header, prepare = prepare, doc = doc, finalize = finalize)
+
+
+def main(doc=None):
+    return run_filter(header, prepare=prepare, doc=doc, finalize=finalize)
+
 
 if __name__ == '__main__':
     main()
