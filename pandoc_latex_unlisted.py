@@ -16,7 +16,7 @@ def header(elem, doc):
                 return [
                     RawBlock('\\addtocontents{toc}{\\protect\\setcounter{tocdepth}{-1}}', 'tex'),
                     elem,
-                    RawBlock('\\addtocontents{toc}{\\protect\\setcounter{tocdepth}{3}}', 'tex'),
+                    RawBlock('\\addtocontents{toc}{\\protect\\setcounter{tocdepth}{2}}', 'tex'),
                 ]
 
 
